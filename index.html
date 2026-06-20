@@ -586,6 +586,23 @@ function renderCard(task){
   if (currentUser) {
     const actions = document.createElement("div");
     actions.className = "card-actions";
+
+    // Owner dropdown
+    const ownerSelect = document.createElement("select");
+    [["","— assign —"],["Tyche","Tyche"],["Jordan","Jordan"],["Veronica","Veronica"]].forEach(([val, label]) => {
+      const opt = document.createElement("option");
+      opt.value = val; opt.textContent = label;
+      if (val === (task.owner || "")) opt.selected = true;
+      ownerSelect.appendChild(opt);
+    });
+    ownerSelect.addEventListener("change", () => {
+      updateDoc(doc(tasksCol, task.id), {
+        owner: ownerSelect.value, updatedAt: serverTimestamp(), updatedBy: currentUser.email
+      });
+    });
+    actions.appendChild(ownerSelect);
+
+    // Column dropdown
     const select = document.createElement("select");
     COLUMNS.forEach(c => {
       const opt = document.createElement("option");
